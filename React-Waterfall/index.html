@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Hello React!</title>
+        <link rel="stylesheet" href="./css/reset.css">
+        <link rel="stylesheet" href="./css/style.css">
+        <script src="build/react.js"></script>
+        <script src="build/react-dom.js"></script>
+        <script src="build/browser.min.js"></script>
+        <!-- <script src="https://unpkg.com/babel-core@5.8.38/browser.min.js"></script> -->
+    </head>
+    <body>
+        <div id="content"></div>
+        <script type="text/babel">
+
+            var ImgItem = React.createClass({
+                render:function() {
+                    return (
+                        <div className="imgListBox" key={this.props.nodeData.index}>
+                            <img className="imgListImg" src={this.props.nodeData.src} />
+                            <h2 className="imgListTitle">This is img index:{this.props.nodeData.index}</h2>
+                        </div>
+                    );
+                }
+            });
+
+            var ImgList = React.createClass({
+
+
+                setPicLoaction:function(parentEle) {
+                    // 得到每一个图片块
+                	var content=[];
+                	// 如果不支持querySelectorAll函数则需要自己编写一个函数
+                	content=parentEle.querySelectorAll(".imgItem");
+                	// 创建一个数组用于保存每一列的高度
+                	var colsHeight=[];
+                	var num=4;//每一行图片个数
+                	// 对每一个图片块进行位置设置，由于已经在样式中设置了图片的宽度和整个容器的宽度，所以已经知道每一行
+                	// 应该放多少个相片
+                	for(var i=0,len=content.length;i<len;i++){
+                		// 首先处理第一排元素
+                		var picHeight=content[i].offsetHeight;
+                		// 更新列高度数组
+                		if(i<4){
+                			colsHeight[i]=picHeight;
+                		}else{
+                			// 获取一行中高度最小值
+                			var minHeight=Math.min.apply(null,colsHeight);
+                			// 获取最小值图片序号
+                			var minIndex=this.getMinHeightIndex(colsHeight,minHeight);
+                			content[i].style.position="absolute";
+                			content[i].style.top=minHeight+"px";
+                			content[i].style.left=content[minIndex].offsetLeft+"px";
+                			// 更新colsHeight数组
+                			colsHeight[minIndex]+=content[i].offsetHeight;
+                		}
+                	}
+                },
+                getMinHeightIndex:function(array,min) {
+                    for(var i=0,len=array.length;i<len;i++){
+                        if(array[i] == min){
+                            return i;
+                        }
+                    }
+                },
+                componentDidMount:function() {
+
+                    var imgContainer = this.refs.imgContainer;
+                    this.setPicLoaction(imgContainer);
+
+                },
+                getListBox:function() {
+                    return this.props.data.map(function(data){
+                        return (
+                            <div className="imgItem">
+                                <ImgItem nodeData={data} />
+                            </div>
+                        );
+                    }.bind(this));
+                },
+                render: function() {
+                    return (
+                        <div ref="imgContainer" key="imgContainer">
+                            {this.getListBox()}
+                        </div>
+                    );
+                }
+            });
+            var ImgBox = React.createClass({
+                componentDidMount:function() {
+                    window.onload = function() {
+                        setPicLocation("container");
+                    	var dataInt={'data':[{'src':'1.jpg'},{'src':'2.jpg'},{'src':'3.jpg'},{'src':'4.jpg'}]};
+
+                    	window.onscroll=function(){
+                    		if(checkSrollSite("container")){
+                    			var oParent = document.getElementById('container');// 父级对象
+                                for(var i=0;i<dataInt.data.length;i++){
+                                    var oPin=document.createElement('div'); //添加 元素节点
+                                    oPin.className='content';                   //添加 类名 name属性
+                                    oParent.appendChild(oPin);              //添加 子节点
+                                    var oBox=document.createElement('div');
+                                    oBox.className='box';
+                                    oPin.appendChild(oBox);
+                                    var oImg=document.createElement('img');
+                                    oImg.src='./images/'+dataInt.data[i].src;
+                                    oBox.appendChild(oImg);
+                                }
+                                setPicLocation("container");
+                    		}
+                    	}
+                    }
+                },
+                checkScrollSite:function(parentEle) {
+                    // 获取所有图片块
+                	var content=document.querySelectorAll("#"+parentEle+" > div");
+                	// 创建触发条件
+                	var lastPicHeight=content[content.length-1].offsetTop;
+                	// 获取当前浏览器窗口显示高度
+                	var scrollTop=document.documentElement.scrollTop||document.body.scrollTop;//注意解决兼容性
+                    var documentH=document.documentElement.clientHeight;//页面高度
+                    return (lastPicHeight<scrollTop+documentH)?true:false;
+                },
+                render: function() {
+                    var imgdata = this.props.imgdata;
+                    return (
+                        <div className = "imgbox">
+                            <ImgList data={imgdata} key={imgdata.index} />
+                        </div>
+                    );
+                }
+            });
+            var data = [
+                    {
+                        "index":"1",
+                        "src":"./images/1.jpg"
+                    },
+                    {
+                        "index":"2",
+                        "src":"./images/2.jpg"
+                    },
+                    {
+                        "index":"3",
+                        "src":"./images/3.jpg"
+                    },
+                    {
+                        "index":"4",
+                        "src":"./images/4.jpg"
+                    },
+                    {
+                        "index":"5",
+                        "src":"./images/5.jpg"
+                    },
+                    {
+                        "index":"6",
+                        "src":"./images/6.jpg"
+                    },
+                    {
+                        "index":"7",
+                        "src":"./images/7.jpg"
+                    },
+                    {
+                        "index":"8",
+                        "src":"./images/8.jpg"
+                    },
+                    {
+                        "index":"9",
+                        "src":"./images/9.jpg"
+                    },
+                    {
+                        "index":"10",
+                        "src":"./images/10.jpg"
+                    },
+                    {
+                        "index":"11",
+                        "src":"./images/11.jpg"
+                    },
+                    {
+                        "index":"12",
+                        "src":"./images/12.jpg"
+                    },
+                    {
+                        "index":"13",
+                        "src":"./images/13.jpg"
+                    },
+                    {
+                        "index":"14",
+                        "src":"./images/14.jpg"
+                    },
+                    {
+                        "index":"15",
+                        "src":"./images/15.jpg"
+                    },
+                    {
+                        "index":"16",
+                        "src":"./images/16.jpg"
+                    }
+                ];
+            ReactDOM.render(
+                <ImgBox imgdata={data} />,
+                document.getElementById('content')
+            );
+
+        </script>
+    </body>
+</html>
