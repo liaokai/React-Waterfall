@@ -19,18 +19,34 @@
                     return (
                         <div className="imgListBox" key={this.props.nodeData.index}>
                             <img className="imgListImg" src={this.props.nodeData.src} />
-                            <h2 className="imgListTitle">This is img index:{this.props.nodeData.index}</h2>
                         </div>
                     );
                 }
             });
 
             var ImgList = React.createClass({
-
-
-                setPicLoaction:function(parentEle) {
+                getListBox:function() {
+                    return this.props.data.map(function(data){
+                        return (
+                            <div className="imgItem">
+                                <ImgItem nodeData={data} />
+                            </div>
+                        );
+                    }.bind(this));
+                },
+                render: function() {
+                    return (
+                        <div ref="imgContainer" key="imgContainer" className="imgContainer">
+                            {this.getListBox()}
+                        </div>
+                    );
+                }
+            });
+            var ImgBox = React.createClass({
+                setPicLocation:function(parentEle) {
                     // 得到每一个图片块
                 	var content=[];
+                    // console.log(parentEle);
                 	// 如果不支持querySelectorAll函数则需要自己编写一个函数
                 	content=parentEle.querySelectorAll(".imgItem");
                 	// 创建一个数组用于保存每一列的高度
@@ -65,56 +81,35 @@
                     }
                 },
                 componentDidMount:function() {
+                    var imgbox = this.refs.imgbox;
+                    var container = imgbox.querySelector(".imgContainer");
+                    var data = this.props.imgdata;
+                    // console.log(container);
+                    this.setPicLocation(container);
 
-                    var imgContainer = this.refs.imgContainer;
-                    this.setPicLoaction(imgContainer);
+                    window.onscroll=function(){
+                    	if(this.checkScrollSite(container)){
+                    		var oParent = document.querySelector('.imgContainer');// 父级对象
 
-                },
-                getListBox:function() {
-                    return this.props.data.map(function(data){
-                        return (
-                            <div className="imgItem">
-                                <ImgItem nodeData={data} />
-                            </div>
-                        );
-                    }.bind(this));
-                },
-                render: function() {
-                    return (
-                        <div ref="imgContainer" key="imgContainer">
-                            {this.getListBox()}
-                        </div>
-                    );
-                }
-            });
-            var ImgBox = React.createClass({
-                componentDidMount:function() {
-                    window.onload = function() {
-                        setPicLocation("container");
-                    	var dataInt={'data':[{'src':'1.jpg'},{'src':'2.jpg'},{'src':'3.jpg'},{'src':'4.jpg'}]};
-
-                    	window.onscroll=function(){
-                    		if(checkSrollSite("container")){
-                    			var oParent = document.getElementById('container');// 父级对象
-                                for(var i=0;i<dataInt.data.length;i++){
-                                    var oPin=document.createElement('div'); //添加 元素节点
-                                    oPin.className='content';                   //添加 类名 name属性
-                                    oParent.appendChild(oPin);              //添加 子节点
-                                    var oBox=document.createElement('div');
-                                    oBox.className='box';
-                                    oPin.appendChild(oBox);
-                                    var oImg=document.createElement('img');
-                                    oImg.src='./images/'+dataInt.data[i].src;
-                                    oBox.appendChild(oImg);
-                                }
-                                setPicLocation("container");
-                    		}
+                            for(var i=0;i<data.length;i++){
+                                var oPin=document.createElement('div'); //添加 元素节点
+                                oPin.className='imgItem';                   //添加 类名 name属性
+                                oParent.appendChild(oPin);              //添加 子节点
+                                var oBox=document.createElement('div');
+                                oBox.className='imgListBox';
+                                oPin.appendChild(oBox);
+                                var oImg=document.createElement('img');
+                                oImg.className="imgListImg";
+                                oImg.src=data[i].src;
+                                oBox.appendChild(oImg);
+                            }
+                            this.setPicLocation(container);
                     	}
-                    }
+                    }.bind(this);
                 },
                 checkScrollSite:function(parentEle) {
                     // 获取所有图片块
-                	var content=document.querySelectorAll("#"+parentEle+" > div");
+                	var content=document.querySelectorAll("div");
                 	// 创建触发条件
                 	var lastPicHeight=content[content.length-1].offsetTop;
                 	// 获取当前浏览器窗口显示高度
@@ -125,7 +120,7 @@
                 render: function() {
                     var imgdata = this.props.imgdata;
                     return (
-                        <div className = "imgbox">
+                        <div className = "imgbox" key={imgdata.index} ref="imgbox">
                             <ImgList data={imgdata} key={imgdata.index} />
                         </div>
                     );
@@ -187,7 +182,7 @@
                     {
                         "index":"14",
                         "src":"./images/14.jpg"
-                    },
+                    },,
                     {
                         "index":"15",
                         "src":"./images/15.jpg"
@@ -195,7 +190,15 @@
                     {
                         "index":"16",
                         "src":"./images/16.jpg"
-                    }
+                    },
+                    {
+                        "index":"17",
+                        "src":"./images/17.jpg"
+                    },
+                    {
+                        "index":"18",
+                        "src":"./images/18.jpg"
+                    },
                 ];
             ReactDOM.render(
                 <ImgBox imgdata={data} />,
