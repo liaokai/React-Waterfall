@@ -14,29 +14,31 @@
         <div id="content"></div>
         <script type="text/babel">
 
-            var ImgItem = React.createClass({
-                render:function() {
-                    return (
-                        <div className="imgListBox" key={this.props.nodeData.index}>
-                            <img className="imgListImg" src={this.props.nodeData.src} />
-                        </div>
-                    );
-                }
-            });
+            // var ImgItem = React.createClass({
+            //     render:function() {
+            //         return (
+            //             <div className="imgListBox" key={this.props.nodeData.index}>
+            //                 <img className="imgListImg" src={this.props.nodeData.src} />
+            //             </div>
+            //         );
+            //     }
+            // });
 
             var ImgList = React.createClass({
                 getListBox:function() {
                     return this.props.data.map(function(data){
                         return (
-                            <div className="imgItem">
-                                <ImgItem nodeData={data} />
+                            <div className="imgItem" >
+                                <div className="imgListBox" key={data.index}>
+                                    <img className="imgListImg" src={data.src} />
+                                </div>
                             </div>
                         );
                     }.bind(this));
                 },
                 render: function() {
                     return (
-                        <div ref="imgContainer" key="imgContainer" className="imgContainer">
+                        <div ref="imgContainer" key="imgListContainer" className="imgContainer">
                             {this.getListBox()}
                         </div>
                     );
@@ -106,12 +108,13 @@
                             this.setPicLocation(container);
                     	}
                         var length = document.querySelectorAll(".imgContainer div");
-                        console.log("length"+length.length);
+                        // console.log("length"+length.length);
                     }.bind(this);
                 },
                 checkScrollSite:function(parentEle) {
                     // 获取所有图片块
-                	var content=document.querySelectorAll("div");
+                	var content=document.querySelectorAll(".imgItem");
+                    console.log(content.length);
                 	// 创建触发条件
                 	var lastPicHeight=content[content.length-1].offsetTop;
                 	// 获取当前浏览器窗口显示高度
@@ -122,8 +125,8 @@
                 render: function() {
                     var imgdata = this.props.imgdata;
                     return (
-                        <div className = "imgbox" key={imgdata.index} ref="imgbox">
-                            <ImgList data={imgdata} key={imgdata.index} />
+                        <div className = "imgbox" key="imgbox" ref="imgbox">
+                            <ImgList data={imgdata} key="imglist" />
                         </div>
                     );
                 }
